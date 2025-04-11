@@ -1,0 +1,26 @@
+Project Requirements
+We've provided a csv file containing data about the game show Jeopardy! in a file named jeopardy.csv. Load the data into a DataFrame and investigate its contents. Try to print out specific columns.
+
+Note that in order to make this project as "real-world" as possible, we haven't modified the data at all - we're giving it to you exactly how we found it. As a result, this data isn't as "clean" as the datasets you normally find on Codecademy. More specifically, there's something odd about the column names. After you figure out the problem with the column names, you may want to rename them to make your life easier for the rest of the project.
+
+In order to display the full contents of a column, we've added this line of code for you:
+
+pd.set_option('display.max_colwidth', None)
+
+
+___________________________________________
+
+
+import pandas as pd
+pd.set_option('display.max_colwidth', None)
+
+jeopardy = pd.read_csv('jeopardy.csv',
+                     parse_dates=[1])
+
+jeopardy.columns = jeopardy.columns.str.strip()
+
+jeopardy.columns = ['Show Number', 'Air Date', 'Round', 'Category', 'Value', 'Question', 'Answer']
+
+print("Bereinigte Spaltennamen:", jeopardy.columns.tolist())  # Prüfen, ob "Question" jetzt korrekt ist
+
+
