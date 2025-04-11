@@ -1,0 +1,39 @@
+Write a function that filters the dataset for questions that contains all of the words in a list of words. For example, when the list ["King", "England"] was passed to our function, the function returned a DataFrame of 49 rows. Every row had the strings "King" and "England" somewhere in its " Question".
+
+Test your function by printing out the column containing the question of each row of the dataset.
+
+___________________
+
+import pandas as pd
+import re
+
+
+def count_questions_with_exact_words(df, column_name, search_words):
+    """
+    Counts the number of rows where ALL search words appear exactly (ignoring case).
+    Returns both the count and the filtered DataFrame.
+    """
+    # Ensure the column contains strings and remove NaN values
+    df = df.dropna(subset=[column_name])
+    df[column_name] = df[column_name].astype(str)
+
+    # Create a regex pattern for each word, ensuring exact word matches and ignoring case
+    search_patterns = [rf"\b{re.escape(word)}\b" for word in search_words]
+
+    # Check if ALL search terms are present in the text (case-insensitive)
+    def match_exact(text):
+        return all(re.search(pattern, text) for pattern in search_patterns)
+
+    mask = df[column_name].apply(match_exact)
+    
+    return mask.sum(), df[mask]  # Return count and filtered DataFrame
+
+    return df[mask]  # Rückgabe des gefilterten DataFrames
+
+# Funktion aufrufen und die Anzahl speichern
+count_result = count_questions_with_exact_words(jeopardy, "Question", ["King", "England"])
+
+# Den Count ausgeben
+print(f"Anzahl der betroffenen Datensätze: {count_result}")
+print(filtered_questions_df)
+
