@@ -1,0 +1,52 @@
+We may want to eventually compute aggregate statistics, like .mean() on the " Value" column. But right now, the values in that column are strings. Convert the" Value" column to floats. If you'd like to, you can create a new column with float values.
+
+While most of the values in the " Value" column represent a dollar amount as a string, note that some do not — these values will need to be handled differently!
+
+Now that you can filter the dataset of question, use your new column that contains the float values of each question to find the "difficulty" of certain topics. For example, what is the average value of questions that contain the word "King"?
+
+Make sure to use the dataset that contains the float values as the dataset you use in your filtering function.
+
+
+__________________________
+
+
+
+import pandas as pd
+import re
+
+def count_questions_with_exact_words(df, column_name, search_words):
+    """
+    Counts the number of rows where ALL search words appear exactly (ignoring case).
+    Returns both the count and the filtered DataFrame.
+    """
+    # Ensure the column contains strings and remove NaN values
+    df = df.dropna(subset=[column_name])
+    df[column_name] = df[column_name].astype(str)
+
+    # Create a regex pattern for each word, ensuring exact word matches and ignoring case
+    search_patterns = [rf"\b{re.escape(word)}\b" for word in search_words]
+
+    # Check if ALL search terms are present in the text (case-insensitive)
+    def match_exact(text):
+        return all(re.search(pattern, text, re.IGNORECASE) for pattern in search_patterns)
+
+    mask = df[column_name].apply(match_exact)
+    
+    return mask.sum(), df[mask]  # Return count and filtered DataFrame
+
+# Funktion aufrufen und die Anzahl speichern
+count_result = count_questions_with_exact_words(jeopardy, "Question", ["King", "England"])
+
+# Function to clean and convert to float
+filtered_questions_df["Value_Float"] = filtered_questions_df["Value"].apply(
+    lambda x: float(x.replace("$", "").replace(",", "")) if isinstance(x, str) and x.replace("$", "").replace(",", "").replace(".", "").isdigit() else None
+)
+# Display the DataFrame
+#print(jeopardy)
+
+mean_per_question = jeopardy.groupby("Category")["Value_Float"].mean()
+
+# Den Count ausgeben
+print(f"Anzahl der betroffenen Datensätze: {count_result}")
+
+print(mean_per_question)
