@@ -1,14 +1,6 @@
-Test your original function with a few different sets of words to try to find some ways your function breaks. Edit your function so it is more robust.
-
-For example, think about capitalization. We probably want to find questions that contain the word "King" or "king".
-
-You may also want to check to make sure you don't find rows that contain substrings of your given words. For example, our function found a question that didn't contain the word "king", however it did contain the word "viking" — it found the "king" inside "viking". 
-Note that this also comes with some drawbacks — you would no longer find questions that contained words like "England's".
-
-_________________________________
-
 import pandas as pd
 import re
+
 
 def count_questions_with_exact_words(df, column_name, search_words):
     """
@@ -20,8 +12,8 @@ def count_questions_with_exact_words(df, column_name, search_words):
     df[column_name] = df[column_name].astype(str)
 
     # Create a regex pattern for each word, ensuring exact word matches and ignoring case
-    search_patterns = [rf"\b{re.escape(word)}\b" for word in search_words]
-
+    search_patterns = [rf"\b{re.escape(word)}('s)?\b" for word in search_words]
+    
     # Check if ALL search terms are present in the text (case-insensitive)
     def match_exact(text):
         return all(re.search(pattern, text, re.IGNORECASE) for pattern in search_patterns)
@@ -30,12 +22,18 @@ def count_questions_with_exact_words(df, column_name, search_words):
     
     return mask.sum(), df[mask]  # Return count and filtered DataFrame
 
+    return df[mask]  # Rückgabe des gefilterten DataFrames
+
 # Funktion aufrufen und die Anzahl speichern
-count_result = count_questions_with_exact_words(jeopardy, "Question", ["King", "England"])
-
-
+count_result = count_questions_with_exact_words(jeopardy, "Question", ["king", "England's"])
 
 # Den Count ausgeben
 print(f"Anzahl der betroffenen Datensätze: {count_result}")
 
-print(filtered_questions_df)
+____MISSION 3:
+
+Test your original function with a few different sets of words to try to find some ways your function breaks. Edit your function so it is more robust.
+
+For example, think about capitalization. We probably want to find questions that contain the word "King" or "king".
+
+You may also want to check to make sure you don't find rows that contain substrings of your given words. For example, our function found a question that didn't contain the word "king", however it did contain the word "viking" — it found the "king" inside "viking". Note that this also comes with some drawbacks — you would no longer find questions that contained words like "England's".
