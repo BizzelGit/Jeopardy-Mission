@@ -1,0 +1,24 @@
+def count_unique_answers(df):
+    """
+    Returns a Series of unique answers and their frequency, sorted from most to least common.
+    """
+    # Entferne Zeilen ohne Antwort
+    df = df.dropna(subset=["Answer"])
+    
+    # Alle Antworten in Kleinbuchstaben vereinheitlichen (optional)
+    df["Answer"] = df["Answer"].astype(str).str.strip()
+    
+    # Zähle Häufigkeit jeder Antwort
+    answer_counts = df["Answer"].value_counts()
+    
+    return answer_counts
+
+# Filtere alle Fragen mit dem Wort "King"
+king_df = filter_questions_by_word(jeopardy, "king")
+
+# Zähle eindeutige Antworten
+king_answers = count_unique_answers(king_df)
+
+# Ausgabe der Top 10 Antworten
+print("Häufigste Antworten auf Fragen mit dem Wort 'King':")
+print(king_answers.head(10))
