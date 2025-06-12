@@ -1,0 +1,36 @@
+import pandas as pd
+import random
+
+# CSV laden und Spalten bereinigen
+jeopardy = pd.read_csv("jeopardy.csv")
+jeopardy.columns = jeopardy.columns.str.strip()
+
+# Entferne Zeilen mit fehlenden Fragen oder Antworten
+jeopardy = jeopardy.dropna(subset=["Question", "Answer"])
+
+# Spalten in den richtigen Typ umwandeln
+jeopardy["Question"] = jeopardy["Question"].astype(str)
+jeopardy["Answer"] = jeopardy["Answer"].astype(str)
+
+# Quiz-Funktion
+def quiz_user(df, num_questions=5):
+    score = 0
+    asked = df.sample(n=num_questions)  # Zufällige Fragen ziehen
+    
+    for index, row in asked.iterrows():
+        print("\nFrage:", row["Question"])
+        user_answer = input("Deine Antwort: ").strip().lower()
+        correct_answer = row["Answer"].strip().lower()
+        
+        # Grober Vergleich (exakter String-Match)
+        if user_answer == correct_answer:
+            print("✅ Richtig!")
+            score += 1
+        else:
+            print(f"❌ Falsch. Die richtige Antwort war: {row['Answer']}")
+    
+    print(f"\nDu hast {score} von {num_questions} Fragen richtig beantwortet.")
+
+# Starte das Quiz
+quiz_user(jeopardy, num_questions=5)
+
