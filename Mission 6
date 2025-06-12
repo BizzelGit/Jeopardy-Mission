@@ -1,0 +1,26 @@
+import pandas as pd
+import re
+
+# Konvertiere das Datum ins richtige Format
+jeopardy['Date'] = pd.to_datetime(jeopardy['Air Date'], errors='coerce')  # wandelt in datetime um
+
+# Hilfsfunktion zum Filtern von Fragen nach Wort und Jahresbereich
+def count_questions_by_word_and_decade(df, word, start_year, end_year):
+    # Nur Fragen im gewünschten Zeitraum
+    df = df[(df['Date'].dt.year >= start_year) & (df['Date'].dt.year <= end_year)]
+    
+    # Regex-Muster für das Wort "Computer" (nicht als Teil von z.B. "Supercomputer")
+    pattern = rf"\b{re.escape(word)}\b"
+    mask = df['Question'].str.contains(pattern, flags=re.IGNORECASE, regex=True)
+    
+    return mask.sum()
+
+# Fragen mit "Computer" in den 1990ern
+count_90s = count_questions_by_word_and_decade(jeopardy, "Computer", 1990, 1999)
+
+# Fragen mit "Computer" in den 2000ern
+count_2000s = count_questions_by_word_and_decade(jeopardy, "Computer", 2000, 2009)
+
+# Ergebnis ausgeben
+print(f"Anzahl der Fragen mit 'Computer' in den 1990ern: {count_90s}")
+print(f"Anzahl der Fragen mit 'Computer' in den 2000ern: {count_2000s}")
