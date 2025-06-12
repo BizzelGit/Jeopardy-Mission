@@ -1,0 +1,23 @@
+# Clean up column names again (just in case)
+jeopardy.columns = jeopardy.columns.str.strip()
+
+# Check how often each category appears in each round
+def category_round_distribution(df, target_category):
+    # Normalize values
+    df['Category'] = df['Category'].astype(str).str.strip().str.lower()
+    df['Round'] = df['Round'].astype(str).str.strip()
+    
+    # Filter for the target category (e.g. 'Literature')
+    filtered = df[df['Category'] == target_category.lower()]
+    
+    # Count how often it appears per round
+    round_counts = filtered['Round'].value_counts()
+    
+    return round_counts
+
+# Example: How often does "Literature" appear in each round?
+literature_rounds = category_round_distribution(jeopardy, "Literature")
+
+# Output
+print("Vorkommen der Kategorie 'Literature' pro Runde:")
+print(literature_rounds)
